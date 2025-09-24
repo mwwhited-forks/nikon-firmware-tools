@@ -4,7 +4,7 @@
     {
         public D3400_0112()
         {
-            p = new Package();
+            p = new Package(0x20);
             Model = "D3400";
             Version = "1.12";
         }
@@ -14,11 +14,20 @@
 
     class D3400_0113 : Firmware
     {
+        Patch[] patch_liveview_no_timeout_15m =
+{
+               new Patch(1,0x311460, new byte[]{0xA0, 0xBB, 0x0D, 0x00}, new byte[] {0x80, 0x27, 0xCB, 0x05} )
+        };
+
+
         public D3400_0113()
         {
-            p = new Package();
+            p = new Package(0x20);
+            
             Model = "D3400";
             Version = "1.13";
+
+            Patches.Add(new PatchSet(PatchLevel.Alpha, "Liveview (15min) No Timeout", patch_liveview_no_timeout_15m));
         }
     }
 }

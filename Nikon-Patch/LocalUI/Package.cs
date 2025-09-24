@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Nikon_Patch
 {
     public class Package : IPackage
     {
-        public Package()
+        long decode_offset = 0;
+
+        public Package(long offset=0)
         {
+            decode_offset = offset;
         }
 
         public bool LoadData(byte[] data)
@@ -20,13 +20,13 @@ namespace Nikon_Patch
             Array.Copy(data, xored, len);
 
             raw = new byte[len];
-            for (int i = 0; i < len; i++)
+            for (int i = 0; i < (len-decode_offset); i++)
             {
                 int ord1_idx = i & 0xFF;
                 int ord2_idx = (i >> 8) & 0xFF;
                 int ord3_idx = (i >> 16) & 0xFF;
 
-                int b = xored[i] ^ Xor_Ord1[ord1_idx] ^ Xor_Ord2[ord2_idx] ^ Xor_Ord3[ord3_idx];
+                int b = xored[i+decode_offset] ^ Xor_Ord1[ord1_idx] ^ Xor_Ord2[ord2_idx] ^ Xor_Ord3[ord3_idx];
                 raw[i] = (byte)b;
             }
             return true;
@@ -101,14 +101,14 @@ namespace Nikon_Patch
             }
 
             // XOR
-            for (int i = 0; i < raw.Length; i++)
+            for (int i = 0; i < (raw.Length - decode_offset); i++)
             {
                 int ord1_idx = i & 0xFF;
                 int ord2_idx = (i >> 8) & 0xFF;
                 int ord3_idx = (i >> 16) & 0xFF;
 
                 int b = raw[i] ^ Xor_Ord1[ord1_idx] ^ Xor_Ord2[ord2_idx] ^ Xor_Ord3[ord3_idx];
-                xored[i] = (byte)b;
+                xored[i + decode_offset] = (byte)b;
             }
 
             outstream.Write(xored, 0, xored.Length);

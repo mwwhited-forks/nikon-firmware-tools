@@ -303,7 +303,7 @@ namespace Nikon_Patch
                         if (text == "")
                         {
                             lstFeatures.DataSource = firm.Patches;
-                            lstFeatures.DisplayMember = "DispalyString";
+                           // lstFeatures.DisplayMember = "DisplayString";
                             PatchSet.SetListBox(lstFeatures);
                             tFeature.Text = "";
                         }
